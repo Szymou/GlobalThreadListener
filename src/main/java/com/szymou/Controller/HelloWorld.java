@@ -1,15 +1,9 @@
-package com.myframe.Controller;
+package com.szymou.Controller;
 
-import com.myframe.Entity.ThreadProcess;
-import com.myframe.utils.GlobalThreadListener;
+import com.alibaba.fastjson.JSONObject;
+import com.szymou.utils.GlobalThreadListener;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 @RestController
 @RequestMapping("/test")
@@ -31,7 +25,7 @@ public class HelloWorld {
             while (i-- > 0) {
                 try {
                     Thread.sleep(2000);
-                    System.out.println("AThread..." + Thread.currentThread().getName());
+                    System.out.println(Thread.currentThread().getName());
                 } catch (Exception e) {
                     System.out.println("线程出错..." + Thread.currentThread().getName());
                 }
@@ -40,7 +34,7 @@ public class HelloWorld {
     }
 
     @RequestMapping("/getThreadStatus")
-    public Map<String, List<ThreadProcess>> getThreadStatus(){
+    public JSONObject getThreadStatus(){
         return GlobalThreadListener.getThreadProcee();
     }
 }

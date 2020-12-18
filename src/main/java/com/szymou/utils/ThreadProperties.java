@@ -1,11 +1,11 @@
-package com.myframe.Entity;
+package com.szymou.utils;
 
-public class ThreadProcess {
+public class ThreadProperties {
     private String name;
     private String description;
-    private String process;
+    private Integer process;
 
-    public ThreadProcess() {
+    public ThreadProperties() {
 
     }
 
@@ -25,16 +25,15 @@ public class ThreadProcess {
         this.description = description;
     }
 
-    public String getProcess() {
+    public Integer getProcess() {
         return process;
     }
 
-    public void setProcess(String process) {
+    public void setProcess(Integer process) {
         this.process = process;
     }
 
-
-    public ThreadProcess(String name, String description, String process){
+    public ThreadProperties(String name, String description, Integer process){
         this.name = name;
         this.description = description;
         this.process = process;

@@ -1,6 +1,5 @@
 package com.szymou.utils;
 
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -38,8 +37,9 @@ public class GlobalThreadListener {
     //创建全局线程池
     private static final int poolSize = 3;
     private static int activityCount = 0;
+    private static int extendPoolSize = poolSize;
     private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(poolSize);
-//    private static ThreadPoolExecutor pool = (ThreadPoolExecutor)fixedThreadPool;
+    private static ThreadPoolExecutor pool = (ThreadPoolExecutor)fixedThreadPool;
 
     //线程池线程状态列表
     private static Set<ThreadProperties> terminatedList = new HashSet<>();//已终结的线程（当天）
@@ -64,8 +64,6 @@ public class GlobalThreadListener {
 
     //开发者直接调用，获取线程池状态
     public static Map<String, Object> getThreadProcee(String... threadName) {
-        wattingList = new ArrayList<>();//正在等待的线程
-        runnableList = new ArrayList<>();//正在等待的线程
         handleProcessStatus();
         Map<String, Object> map = new HashMap<>();
         map.put("【wattingList】", wattingList);
@@ -92,27 +90,15 @@ public class GlobalThreadListener {
         @Override
         public void run() {
             //设置刷新状态时间(s)
-            double refresh = 0.0;
+            int refresh = 0;
             Future<?> submit = fixedThreadPool.submit(command);
-            activityCount++;
             while (true) {
-                try {
-                    if (0 == refresh) {
-                    } else {
-                        Thread.sleep((int) refresh * 1000);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
+                synchronized (this) {
+                    threadProperties.setProcess(ProcessStatus.RUNNING.getCode());
                     if (submit.isDone()) {
                         threadProperties.setProcess(ProcessStatus.TERMINATED.getCode());
                         activityCount--;
                         break;
-                    } else {
-                        if (activityCount - 1 < poolSize) {
-                            threadProperties.setProcess(ProcessStatus.RUNNING.getCode());
-                        }
-
                     }
                 }
             }
@@ -121,18 +107,35 @@ public class GlobalThreadListener {
 
     //【处理】每个线程的状态
     private static void handleProcessStatus() {
+        wattingList = new ArrayList<>();//正在等待的线程
+        runnableList = new ArrayList<>();//正在等待的线程
         Iterator<ThreadProperties> processIterator = threadPropertiesList.iterator();
         while (processIterator.hasNext()) {
             ThreadProperties threadProperties = processIterator.next();
             if (threadProperties.getProcess() == ProcessStatus.TERMINATED.getCode()) {
                 terminatedList.add(threadProperties);
                 processIterator.remove();
-            } else if (threadProperties.getProcess() == ProcessStatus.WAITTING.getCode()) {
+            }
+//            else if (threadProperties.getProcess() == ProcessStatus.WAITTING.getCode()) {
+//                wattingList.add(threadProperties);
+//            }
+            else {
                 wattingList.add(threadProperties);
-            } else if (threadProperties.getProcess() == ProcessStatus.RUNNING.getCode()) {
-                runnableList.add(threadProperties);
             }
         }
+
+        //粗略取“正在等待”的线程
+        Iterator<ThreadProperties> wattingIterator = wattingList.iterator();
+        Integer i = 0;
+        while (wattingIterator.hasNext()){
+            ThreadProperties threadProperties = wattingIterator.next();
+            if(i < poolSize){
+                runnableList.add(threadProperties);
+                wattingIterator.remove();
+                i++;
+            }
+        }
+
     }
 
 

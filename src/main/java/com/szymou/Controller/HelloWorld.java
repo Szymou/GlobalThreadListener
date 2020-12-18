@@ -15,7 +15,7 @@ public class HelloWorld {
 //        ThreadWatchDog watchDog = ThreadWatchDog.getInstance();
 //        watchDog.sayHello();
         AThrad aThrad = new AThrad();
-        GlobalThreadListener.execFixedThreadPool(aThrad, "我的线程");
+        GlobalThreadListener.execFixedThreadPool(aThrad, "导出");
         return "HelloWorld!!";
     }
 

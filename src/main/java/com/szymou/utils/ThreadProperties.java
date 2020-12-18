@@ -4,6 +4,7 @@ public class ThreadProperties {
     private String name;
     private String description;
     private Integer process;
+    private String status;
 
     public ThreadProperties() {
 
@@ -31,11 +32,32 @@ public class ThreadProperties {
 
     public void setProcess(Integer process) {
         this.process = process;
+        switch (process){
+            case 1 :
+                this.setStatus(ProcessStatus.WAITTING.getMessage());
+                break;
+            case 2 :
+                this.setStatus(ProcessStatus.RUNNING.getMessage());
+                break;
+            case 3 :
+                this.setStatus(ProcessStatus.TERMINATED.getMessage());
+                break;
+            default:
+                break;
+        }
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public ThreadProperties(String name, String description, Integer process){
-        this.name = name;
-        this.description = description;
-        this.process = process;
+        this.setName(name);
+        this.setDescription(description);
+        this.setProcess(process);
     }
 }

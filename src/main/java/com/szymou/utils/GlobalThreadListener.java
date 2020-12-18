@@ -12,8 +12,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * GlobalThreadListener.execFixedThreadPool(Runnable Object, "threadName", "线程描述")
- * @date 2020年12月16日 16:56:27
+ *
  * @author 熟知宇某
+ * @date 2020年12月16日 16:56:27
  */
 @Component
 public class GlobalThreadListener {
@@ -23,11 +24,13 @@ public class GlobalThreadListener {
 
     //创建实例
     private static GlobalThreadListener instance = new GlobalThreadListener();
+
     //防止被实例
-    private GlobalThreadListener(){}
+    private GlobalThreadListener() {
+    }
 
     //获取唯一的实例
-    public static GlobalThreadListener getInstance(ThreadProperties threadProperties){
+    public static GlobalThreadListener getInstance(ThreadProperties threadProperties) {
         threadPropertiesList.add(threadProperties);
         return instance;
     }
@@ -44,9 +47,8 @@ public class GlobalThreadListener {
     private static List<ThreadProperties> wattingList;//正在等待的线程
 
 
-
     //开发者直接调用--执行线程
-    public static void execFixedThreadPool(Runnable command, String threadName, String ... attr){
+    public static void execFixedThreadPool(Runnable command, String threadName, String... attr) {
         ThreadProperties threadProperties = new ThreadProperties(
                 threadName + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()),
                 attr.length > 0 ? attr[0] : "",
@@ -61,26 +63,28 @@ public class GlobalThreadListener {
     }
 
     //开发者直接调用，获取线程池状态
-    public static JSONObject getThreadProcee(String ... threadName){
+    public static Map<String, Object> getThreadProcee(String... threadName) {
         wattingList = new ArrayList<>();//正在等待的线程
         runnableList = new ArrayList<>();//正在等待的线程
         handleProcessStatus();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("【wattingList】", wattingList);
-        jsonObject.put("【runableList】", runnableList);
-        jsonObject.put("【terminatedList】", terminatedList);
-        return jsonObject;
+        Map<String, Object> map = new HashMap<>();
+        map.put("【wattingList】", wattingList);
+        map.put("【runableList】", runnableList);
+        map.put("【terminatedList】", terminatedList);
+        return map;
     }
 
 
-
-    /** ------------------------------------------------------------------以下为封装函数----------------------------------------------------------------- **/
+    /**
+     * ------------------------------------------------------------------以下为封装函数-----------------------------------------------------------------
+     **/
 
     //【监听】每个线程的状态
-    private static class ListenProcessStatus implements Runnable{
+    private static class ListenProcessStatus implements Runnable {
         private ThreadProperties threadProperties;
         private Runnable command;
-        ListenProcessStatus(ThreadProperties threadProperties, Runnable command){
+
+        ListenProcessStatus(ThreadProperties threadProperties, Runnable command) {
             this.threadProperties = threadProperties;
             this.command = command;
         }
@@ -88,13 +92,14 @@ public class GlobalThreadListener {
         @Override
         public void run() {
             //设置刷新状态时间(s)
-            int refresh = 0;
+            double refresh = 0.0;
             Future<?> submit = fixedThreadPool.submit(command);
+            activityCount++;
             while (true) {
                 try {
-                    if(0 == refresh){
-                    }else {
-                        Thread.sleep(refresh * 1000);
+                    if (0 == refresh) {
+                    } else {
+                        Thread.sleep((int) refresh * 1000);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -104,9 +109,8 @@ public class GlobalThreadListener {
                         activityCount--;
                         break;
                     } else {
-                        if(activityCount < poolSize){
+                        if (activityCount - 1 < poolSize) {
                             threadProperties.setProcess(ProcessStatus.RUNNING.getCode());
-                            activityCount++;
                         }
 
                     }
@@ -118,33 +122,21 @@ public class GlobalThreadListener {
     //【处理】每个线程的状态
     private static void handleProcessStatus() {
         Iterator<ThreadProperties> processIterator = threadPropertiesList.iterator();
-        while (processIterator.hasNext()){
+        while (processIterator.hasNext()) {
             ThreadProperties threadProperties = processIterator.next();
-            if(threadProperties.getProcess() == ProcessStatus.TERMINATED.getCode()){
-                terminatedList.add(threadProperties); processIterator.remove();
-            }else if(threadProperties.getProcess() == ProcessStatus.WAITTING.getCode()){
+            if (threadProperties.getProcess() == ProcessStatus.TERMINATED.getCode()) {
+                terminatedList.add(threadProperties);
+                processIterator.remove();
+            } else if (threadProperties.getProcess() == ProcessStatus.WAITTING.getCode()) {
                 wattingList.add(threadProperties);
-            }else if(threadProperties.getProcess() == ProcessStatus.RUNNING.getCode()){
+            } else if (threadProperties.getProcess() == ProcessStatus.RUNNING.getCode()) {
                 runnableList.add(threadProperties);
             }
         }
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void sayHello(){
+    public void sayHello() {
         System.out.println("你好！熟知宇某！");
     }
 }

@@ -9,7 +9,9 @@
 >   > **GlobalThreadListener.getThreadProcee**();    
 >   > **return**：{"【wattingList】":[ ],"【runableList】":[ ],"【terminatedList】":[ ]}
 > 4. 【未实现】弹小窗（js实现？vue写插件实现？）
-> 5. 【未实现】
-
+> 5. 【未实现】根据线程名称模糊查询线程状态
+> 6. 【未实现】自定义线程状态刷新率
+  
+  
 >### 逻辑
-> 没有visio，先不提供，看代码可以看懂
+> 先不提供，看代码可懂

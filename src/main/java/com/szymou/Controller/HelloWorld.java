@@ -1,6 +1,5 @@
 package com.szymou.Controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.szymou.utils.GlobalThreadListener;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,13 +9,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/test")
 public class HelloWorld {
+    private int i = 0;
     @RequestMapping("/HelloWorld")
     public String HelloWorld(){
-//        ThreadWatchDog watchDog = ThreadWatchDog.getInstance();
-//        watchDog.sayHello();
         AThrad aThrad = new AThrad();
-        GlobalThreadListener.execFixedThreadPool(aThrad, "导出");
-        return "HelloWorld!!";
+        GlobalThreadListener.execFixedThreadPool(aThrad, "线程" + i++, "描述" + i);
+        return "线程" + i;
     }
 
     static class AThrad implements Runnable{

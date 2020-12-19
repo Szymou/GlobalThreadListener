@@ -15,7 +15,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author 熟知宇某
  * @date 2020年12月16日 16:56:27
  */
-@Component
 public class GlobalThreadListener {
 
     //线程队列
@@ -35,7 +34,7 @@ public class GlobalThreadListener {
     }
 
     //创建全局线程池
-    private static final int poolSize = 3;
+    private static final int poolSize = 20;
     private static int activityCount = 0;
     private static int extendPoolSize = poolSize;
     private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(poolSize);

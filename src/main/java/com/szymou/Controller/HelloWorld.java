@@ -13,7 +13,8 @@ public class HelloWorld {
     @RequestMapping("/HelloWorld")
     public String HelloWorld(){
         AThrad aThrad = new AThrad();
-        GlobalThreadListener.execFixedThreadPool(aThrad, "线程" + i++, "描述" + i);
+        GlobalThreadListener globalThreadListener = GlobalThreadListener.getInstance();
+        globalThreadListener.execFixedThreadPool(aThrad, "线程" + i++, "描述" + i);
         return "线程" + i;
     }
 
@@ -36,5 +37,10 @@ public class HelloWorld {
     @RequestMapping("/getThreadStatus")
     public Map<String, Object> getThreadStatus(){
         return GlobalThreadListener.getThreadProcee();
+    }
+
+    @RequestMapping("/getThreadProceeStatusNum")
+    public Map<String, Object> getThreadProceeStatusNum(){
+        return GlobalThreadListener.getThreadProceeStatusNum();
     }
 }

@@ -30,8 +30,13 @@ public class GlobalThreadListener {
         return instance;
     }
 
+    //获取唯一的实例
+    public static GlobalThreadListener getInstance() {
+        return instance;
+    }
+
     //创建全局线程池
-    private static final int poolSize = 8;
+    private static final int poolSize = 3;
     private static int activityCount = 0;
     private static int extendPoolSize = poolSize;
     private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(poolSize);
@@ -44,7 +49,7 @@ public class GlobalThreadListener {
 
 
     //开发者直接调用--执行线程
-    public static void execFixedThreadPool(Runnable command, String threadName, String... attr) {
+    public void execFixedThreadPool(Runnable command, String threadName, String... attr) {
         ThreadProperties threadProperties = new ThreadProperties(
                 threadName,
                 new Date(),
@@ -55,7 +60,24 @@ public class GlobalThreadListener {
         //开启线程监听每个子线程的状态
         ListenProcessStatus listenProcessStatus = new ListenProcessStatus(threadProperties, command);
         Thread thread = new Thread(listenProcessStatus);
-        thread.start();
+        //没进入一个线程，缓一下方可进入第二个
+        new Thread(() -> {
+            while (true) {
+                synchronized (this) {
+                    if (pool.getActiveCount() < poolSize) {
+                        thread.start();
+                        try {
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            break;
+                        }
+
+                    }
+                }
+            }
+        }).start();
 
     }
 
@@ -93,7 +115,6 @@ public class GlobalThreadListener {
             this.threadProperties = threadProperties;
             this.command = command;
         }
-
         @Override
         public void run() {
             //设置刷新状态时间(s)
@@ -104,7 +125,6 @@ public class GlobalThreadListener {
                     threadProperties.setProcess(ProcessStatus.RUNNING.getCode());
                     if (submit.isDone()) {
                         threadProperties.setProcess(ProcessStatus.TERMINATED.getCode());
-                        activityCount--;
                         break;
                     }
                 }
@@ -123,24 +143,26 @@ public class GlobalThreadListener {
                 terminatedList.add(threadProperties);
                 processIterator.remove();
             }
-//            else if (threadProperties.getProcess() == ProcessStatus.WAITTING.getCode()) {
-//                wattingList.add(threadProperties);
-//            }
-            else {
+            else if (threadProperties.getProcess() == ProcessStatus.WAITTING.getCode()) {
                 wattingList.add(threadProperties);
+            }
+            else if (threadProperties.getProcess() == ProcessStatus.RUNNING.getCode()) {{
+                runnableList.add(threadProperties);
             }
         }
 
-        //粗略取“正在等待”的线程
-        Iterator<ThreadProperties> wattingIterator = wattingList.iterator();
-        Integer i = 0;
-        while (wattingIterator.hasNext()){
-            ThreadProperties threadProperties = wattingIterator.next();
-            if(i < poolSize){
-                runnableList.add(threadProperties);
-                wattingIterator.remove();
-                i++;
-            }
+//        //粗略取“正在等待”的线程
+//        Iterator<ThreadProperties> wattingIterator = wattingList.iterator();
+//        Integer i = 0;
+//        while (wattingIterator.hasNext()){
+//            ThreadProperties threadProperties = wattingIterator.next();
+//            if(i < poolSize){
+//                runnableList.add(threadProperties);
+//                wattingIterator.remove();
+//                i++;
+//            }else {
+//                threadProperties.setProcess(ProcessStatus.WAITTING.getCode());
+//            }
         }
 
     }

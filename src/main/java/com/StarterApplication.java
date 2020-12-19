@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author szymou
- * TODO：用缓存？
+ * TODO：后期用缓存
  * 1.将线程名字、描述写进实体类
  * 2.线程结束，需要对实体类说明已结束。
  * 3.线程池最多10个

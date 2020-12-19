@@ -31,7 +31,7 @@ public class GlobalThreadListener {
     }
 
     //创建全局线程池
-    private static final int poolSize = 20;
+    private static final int poolSize = 8;
     private static int activityCount = 0;
     private static int extendPoolSize = poolSize;
     private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(poolSize);

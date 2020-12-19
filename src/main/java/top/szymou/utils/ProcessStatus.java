@@ -1,4 +1,4 @@
-package com.szymou.utils;
+package top.szymou.utils;
 
 public enum ProcessStatus {
     WAITTING(1, "线程等待"),

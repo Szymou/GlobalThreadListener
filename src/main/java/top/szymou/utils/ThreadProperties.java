@@ -1,4 +1,4 @@
-package com.szymou.utils;
+package top.szymou.utils;
 
 import java.util.Date;
 

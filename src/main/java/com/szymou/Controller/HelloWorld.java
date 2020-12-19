@@ -1,6 +1,6 @@
 package com.szymou.Controller;
 
-import com.szymou.utils.GlobalThreadListener;
+import top.szymou.utils.GlobalThreadListener;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

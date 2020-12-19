@@ -1,8 +1,5 @@
-package com.szymou.utils;
+package top.szymou.utils;
 
-import org.springframework.stereotype.Component;
-
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

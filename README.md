@@ -31,7 +31,8 @@
 > 1. 实现一个线程
 >   > TestRunnable testRunnable = new TestRunnable(name);//TestRunnable 继承Runnable
 > 2. 线程倒入线程池
->   > GlobalThreadListener.execFixedThreadPool(testRunnable, “线程名”, "描述");//将线程执行与线程池，该线程被监听
+>   > GlobalThreadListener globalThreadListener = GlobalThreadListener.getInstance();
+>   > globalThreadListener.execFixedThreadPool(testRunnable, “线程名”, "描述");//将线程执行与线程池，该线程被监听
 > 3. 获取线程池各个线程状态
 >   > GlobalThreadListener.getThreadProcee();//返回GlobalThreadListener监听的所有线程详情（包括等待、执行、终止状态）  
 >   > GlobalThreadListener.getThreadProceeStatusNum();//返回GlobalThreadListener监听的所有线程详情（包括等待、执行、终止状态）

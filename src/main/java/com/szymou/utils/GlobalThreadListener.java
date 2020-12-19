@@ -50,7 +50,8 @@ public class GlobalThreadListener {
     //开发者直接调用--执行线程
     public static void execFixedThreadPool(Runnable command, String threadName, String... attr) {
         ThreadProperties threadProperties = new ThreadProperties(
-                threadName + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()),
+                threadName,
+                new Date(),
                 attr.length > 0 ? attr[0] : "",
                 ProcessStatus.WAITTING.getCode());
         //加入线程队列
@@ -62,13 +63,23 @@ public class GlobalThreadListener {
 
     }
 
-    //开发者直接调用，获取线程池状态
+    //开发者直接调用，获取线程池状态--详情
     public static Map<String, Object> getThreadProcee(String... threadName) {
         handleProcessStatus();
         Map<String, Object> map = new HashMap<>();
         map.put("【wattingList】", wattingList);
         map.put("【runableList】", runnableList);
         map.put("【terminatedList】", terminatedList);
+        return map;
+    }
+
+    //开发者直接调用，获取线程池状态--数量
+    public static Map<String, Object> getThreadProceeStatusNum(String... threadName) {
+        handleProcessStatus();
+        Map<String, Object> map = new HashMap<>();
+        map.put("【wattingList】", wattingList.size());
+        map.put("【runableList】", runnableList.size());
+        map.put("【terminatedList】", terminatedList.size());
         return map;
     }
 

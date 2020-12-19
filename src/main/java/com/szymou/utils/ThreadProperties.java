@@ -1,7 +1,10 @@
 package com.szymou.utils;
 
+import java.util.Date;
+
 public class ThreadProperties {
     private String name;
+    private Date date;
     private String description;
     private Integer process;
     private String status;
@@ -16,6 +19,14 @@ public class ThreadProperties {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getDescription() {
@@ -55,7 +66,8 @@ public class ThreadProperties {
         this.status = status;
     }
 
-    public ThreadProperties(String name, String description, Integer process){
+    public ThreadProperties(String name,Date date, String description, Integer process){
+        this.date = date;
         this.setName(name);
         this.setDescription(description);
         this.setProcess(process);
